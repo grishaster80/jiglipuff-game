@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Wiwiwi the Cat Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 3px solid #333;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        #gameContainer {
+            text-align: center;
+        }
+        #score, #lives {
+            font-size: 24px;
+            margin: 10px 0;
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        #gameOver {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #mobile-controls {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            width: 100vw;
+            z-index: 10;
+            justify-content: center;
+            gap: 40px;
+        }
+        .mobile-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #333;
+            font-size: 2.5rem;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        @media (max-width: 600px) {
+            #gameContainer { width: 100vw; }
+            canvas { width: 100vw !important; height: 70vw !important; max-width: 100vw; max-height: 80vh; }
+            #mobile-controls { display: flex; }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="score">Score: 0</div>
+        <div id="lives">Lives: 3</div>
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <div id="gameOver">
+            <h2>Game Over!</h2>
+            <p>Your final score: <span id="finalScore">0</span></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
+        <div id="mobile-controls">
+            <button class="mobile-btn" id="btn-left">&#8592;</button>
+            <button class="mobile-btn" id="btn-right">&#8594;</button>
+        </div>
+    </div>
+    <!-- Audio Elements -->
+    <audio id="bgm" src="Pokemon - Jigglypuff.mp3" loop preload="auto"></audio>
+    <audio id="sfx-catch" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9bfae2.mp3" preload="auto"></audio>
+    <audio id="sfx-miss" src="https://cdn.pixabay.com/audio/2022/03/15/audio_11e1b1b2b2.mp3" preload="auto"></audio>
+    <audio id="sfx-gameover" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12c6fae7b6.mp3" preload="auto"></audio>
+    <audio id="sfx-combo" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9bfae2.mp3" preload="auto"></audio>
+    <script src="game.js"></script>
+</body>
+</html> 
