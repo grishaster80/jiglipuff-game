@@ -12,8 +12,8 @@ const cat = {
     y: canvas.height - 100,
     width: 80,
     height: 80,
-    speed: 8,  // Increased base speed
-    baseSpeed: 8
+    speed: 3.5,  // Even slower base speed
+    baseSpeed: 3.5
 };
 
 let score = 0;
@@ -35,10 +35,10 @@ catImg.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/p
 
 // Treat types
 const treatTypes = [
-    { color: '#ff6b6b', points: 10, speed: 4, probability: 0.5 },  // Regular treat
-    { color: '#4CAF50', points: 20, speed: 5, probability: 0.3 },  // Special treat
-    { color: '#FFD700', points: 50, speed: 6, probability: 0.15 }, // Golden treat
-    { color: '#9C27B0', points: 100, speed: 7, probability: 0.05 }  // Ultra rare treat
+    { color: '#ff6b6b', points: 10, speed: 2, probability: 0.5 },  // Regular treat
+    { color: '#4CAF50', points: 20, speed: 2.7, probability: 0.3 },  // Special treat
+    { color: '#FFD700', points: 50, speed: 3.5, probability: 0.15 }, // Golden treat
+    { color: '#9C27B0', points: 100, speed: 5, probability: 0.05 }  // Ultra rare treat
 ];
 
 // Audio elements
@@ -163,12 +163,11 @@ function update() {
             treats.splice(i, 1);
             score += treat.points;
             scoreElement.textContent = `Score: ${score}`;
-            // Live highscore update
             if (score > highscore) {
                 highscore = score;
-                localStorage.setItem('jigglypuff_highscore', highscore);
-                highscoreElement.textContent = `Highscore: ${highscore}`;
+                localStorage.setItem('jigglypuff_highscore', String(highscore));
             }
+            highscoreElement.textContent = `Highscore: ${highscore}`;
             createParticleEffect(treat.x, treat.y, treat.color);
             // Play catch sound for all treats
             playSFX(sfxCatch);
@@ -280,7 +279,7 @@ function draw() {
 function gameOver() {
     gameActive = false;
     finalScoreElement.textContent = score;
-    // Highscore already updated live
+    highscoreElement.textContent = `Highscore: ${highscore}`;
     gameOverElement.style.display = 'block';
     stopBGM();
     playSFX(sfxGameOver);
