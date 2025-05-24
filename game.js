@@ -4,6 +4,7 @@ const scoreElement = document.getElementById('score');
 const livesElement = document.getElementById('lives');
 const gameOverElement = document.getElementById('gameOver');
 const finalScoreElement = document.getElementById('finalScore');
+const highscoreElement = document.getElementById('highscore');
 
 // Game objects
 const cat = {
@@ -24,6 +25,8 @@ let gameActive = true;
 let gameSpeed = 1;  // Speed multiplier
 let lastSpeedIncrease = 0;  // Track when to increase speed
 let bgmStarted = false;
+let highscore = Number(localStorage.getItem('jigglypuff_highscore')) || 0;
+highscoreElement.textContent = `Highscore: ${highscore}`;
 
 // Load cat image
 const catImg = new Image();
@@ -270,6 +273,12 @@ function draw() {
 function gameOver() {
     gameActive = false;
     finalScoreElement.textContent = score;
+    // Update highscore if needed
+    if (score > highscore) {
+        highscore = score;
+        localStorage.setItem('jigglypuff_highscore', highscore);
+        highscoreElement.textContent = `Highscore: ${highscore}`;
+    }
     gameOverElement.style.display = 'block';
     stopBGM();
     playSFX(sfxGameOver);
@@ -277,6 +286,9 @@ function gameOver() {
 
 // Restart game
 function restartGame() {
+    // Stop previous game loop if running
+    if (gameLoop) cancelAnimationFrame(gameLoop);
+
     score = 0;
     lives = 3;
     treats = [];
@@ -285,8 +297,12 @@ function restartGame() {
     gameSpeed = 1; // Reset speed
     lastSpeedIncrease = 0; // Reset speed increase tracker
     cat.speed = cat.baseSpeed;
+    // Reset cat position to center
+    cat.x = (canvas.width - cat.width) / 2;
+    cat.y = canvas.height - 100;
     scoreElement.textContent = `Score: ${score}`;
     livesElement.textContent = `Lives: ${lives}`;
+    highscoreElement.textContent = `Highscore: ${highscore}`;
     gameOverElement.style.display = 'none';
     playBGM();
     gameStep();
@@ -310,4 +326,25 @@ function startBGMOnUserInteraction() {
 }
 window.addEventListener('click', startBGMOnUserInteraction);
 window.addEventListener('keydown', startBGMOnUserInteraction);
+
+// Add after all variable declarations, before any game logic
+function resizeCanvas() {
+    // For mobile: fit width, keep aspect ratio
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+    let aspect = 2/3; // original 400x600
+    if (w < 600) {
+        canvas.width = w;
+        canvas.height = Math.min(h * 0.6, w / aspect);
+    } else {
+        canvas.width = 400;
+        canvas.height = 600;
+    }
+    // Re-center cat if needed
+    cat.y = canvas.height - 100;
+    if (cat.x > canvas.width - cat.width) cat.x = canvas.width - cat.width;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
 gameStep(); 
