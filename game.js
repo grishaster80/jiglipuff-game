@@ -25,7 +25,8 @@ let gameActive = true;
 let gameSpeed = 1;  // Speed multiplier
 let lastSpeedIncrease = 0;  // Track when to increase speed
 let bgmStarted = false;
-let highscore = Number(localStorage.getItem('jigglypuff_highscore')) || 0;
+let highscore = Number(localStorage.getItem('jigglypuff_highscore'));
+if (!Number.isFinite(highscore) || highscore < 0) highscore = 0;
 highscoreElement.textContent = `Highscore: ${highscore}`;
 
 // Load cat image
@@ -162,6 +163,12 @@ function update() {
             treats.splice(i, 1);
             score += treat.points;
             scoreElement.textContent = `Score: ${score}`;
+            // Live highscore update
+            if (score > highscore) {
+                highscore = score;
+                localStorage.setItem('jigglypuff_highscore', highscore);
+                highscoreElement.textContent = `Highscore: ${highscore}`;
+            }
             createParticleEffect(treat.x, treat.y, treat.color);
             // Play catch sound for all treats
             playSFX(sfxCatch);
@@ -273,12 +280,7 @@ function draw() {
 function gameOver() {
     gameActive = false;
     finalScoreElement.textContent = score;
-    // Update highscore if needed
-    if (score > highscore) {
-        highscore = score;
-        localStorage.setItem('jigglypuff_highscore', highscore);
-        highscoreElement.textContent = `Highscore: ${highscore}`;
-    }
+    // Highscore already updated live
     gameOverElement.style.display = 'block';
     stopBGM();
     playSFX(sfxGameOver);
@@ -329,13 +331,13 @@ window.addEventListener('keydown', startBGMOnUserInteraction);
 
 // Add after all variable declarations, before any game logic
 function resizeCanvas() {
-    // For mobile: fit width, keep aspect ratio
+    // For mobile: fit width, keep 16:9 aspect ratio
     let w = window.innerWidth;
     let h = window.innerHeight;
-    let aspect = 2/3; // original 400x600
+    let aspect = 16/9;
     if (w < 600) {
         canvas.width = w;
-        canvas.height = Math.min(h * 0.6, w / aspect);
+        canvas.height = w / aspect;
     } else {
         canvas.width = 400;
         canvas.height = 600;
